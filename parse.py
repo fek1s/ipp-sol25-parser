@@ -5,7 +5,7 @@
 '''
 
 import sys
-from lark import Lark
+from lark import Lark, UnexpectedToken, UnexpectedCharacters
 
 sol25_grammar = r"""
 // 0) Start pravidlo
@@ -32,7 +32,11 @@ method: selector block
 // - Jednoslovny selektor: "run"
 // - Viceslovny selektor: "compute:and:and:"
 
-selector: ID ( ":" ID )*
+selector: single_selector | multi_selector
+
+single_selector: ID
+
+multi_selector: ID ":" (ID ":")* 
 
 
 // ---------------------
@@ -51,18 +55,19 @@ var_assign: ID ASSIGN expr
 // ---------------------
 // 6) Vyrazy
 
-expr: expr_base expr_tail?
+?expr: send_expr
 
-// expr_tail: bud bezparametricky selektor nebo parametricky selektor 
-expr_tail: ID  -> paramless_selector
-         | expr_sel 
-         |          -> no_selector // epsilon
+send_expr: primary (msg_send)*
 
-expr_sel: ID ":" expr_base expr_tail? // parametricky selektor typu "foo: 123"
+msg_send: paramless_send | keyword_send
+
+paramless_send: ID
+
+keyword_send: (ID ":" expr)+
 
 
-expr_base: INT
-         | STR
+?primary: INT
+         | STRING
          | NIL
          | TRUE
          | FALSE
@@ -116,8 +121,19 @@ def call_help():
 def main():
     source_code = sys.stdin.read()
     print(source_code)
-    parse_tree = sol25_parser.parse(source_code)
-    print(parse_tree.pretty())
+
+    try:
+        tree = sol25_parser.parse(source_code)
+        print(tree.pretty())
+    except UnexpectedToken as e:
+        print(f"Unexpected token: {e}")
+        sys.exit(21)
+    except UnexpectedCharacters as e:
+        print(f"Unexpected characters: {e}")
+        sys.exit(22)
+    
+
+
 
 
 if __name__ == "__main__":
