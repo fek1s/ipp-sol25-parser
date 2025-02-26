@@ -116,7 +116,9 @@ sol25_parser = Lark(
 )
 
 def call_help():
-    print("Help is here")
+    print("Nápověda k programu parse.py")
+    print("Použití např.: python3.11 parse.py < [input_file] > [output_file]")
+    print("  --help: Vypíše tuto nápovědu")
 
 def main():
     source_code = sys.stdin.read()
