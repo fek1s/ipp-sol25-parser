@@ -5,7 +5,17 @@
 '''
 
 import sys
-from lark import Lark, UnexpectedToken, UnexpectedCharacters
+from lark import Lark, UnexpectedToken, UnexpectedCharacters, Transformer
+from ast_nodes import (
+    ProgramNode,
+    ClassNode,
+    MethodNode,
+    BlockNode,
+    AssignNode,
+    SendNode,
+    LiteralNode,
+    VarNode,
+)
 
 sol25_grammar = r"""
 // 0) Start pravidlo
