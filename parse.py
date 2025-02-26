@@ -95,7 +95,7 @@ ASSIGN: ":="
 
 CID: /[A-Z][a-zA-Z0-9_]*/
 
-ID: /[a-z_][a-zA-Z0-9_]*/
+ID: /(?!class|nil|true|false|self|super)[a-z_][a-zA-Z0-9_]*/
 
 INT: /[+\-]?\d+/
 
