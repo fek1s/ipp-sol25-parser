@@ -53,7 +53,7 @@ multi_selector: ID ":" (ID ":")*
 // 5) Bloky podle 10-14
 block: "[" (block_params ("|" block_stat)? | block_stat)? "]"
 
-block_params: ( ":" ID)*
+block_params: (BLOCK_PARAM_ID)*
 
 block_stat: statement ( "." statement )* "."?
 
@@ -110,6 +110,9 @@ ID: /(?!class|nil|true|false|self|super)[a-z_][a-zA-Z0-9_]*/
 INT: /[+\-]?\d+/
 
 STRING: /'(\\[n'\\\\]|[^'\\])*'/
+
+BLOCK_PARAM_ID: /:[a-z_][a-zA-Z0-9_]*/
+
 
 %ignore /"[^"]*"/
 
