@@ -107,7 +107,7 @@ CID: /[A-Z][a-zA-Z0-9_]*/
 
 ID: /(?!class|nil|true|false|self|super)[a-z_][a-zA-Z0-9_]*/
 
-INT: /[+\-]?\d+/
+INT: /^[+\-]?\d+$/
 
 STRING: /'(\\[n'\\\\]|[^'\\])*'/
 
@@ -138,21 +138,26 @@ def main():
         tree = sol25_parser.parse(source_code)
         print(tree.pretty())
     except UnexpectedToken as e:
-        print(f"Unexpected token: {e}")
-        sys.exit(21)
-    except UnexpectedCharacters as e:
-        print(f"Unexpected characters: {e}")
+        print(f"Unexpected token: {e}", file=sys.stderr)
         sys.exit(22)
+    except UnexpectedCharacters as e:
+        print(f"Unexpected characters: {e}", file=sys.stderr)
+        sys.exit(21)
     
 
 
 
 
 if __name__ == "__main__":
-    if "--help" in sys.argv or "-h" in sys.argv:
+    args = sys.argv[1:] # Skip the first argument (name of the script)
+    if "--help" in args or "-h" in args:
+        if len(args) > 1:
+            print("Invalid arguments", file=sys.stderr)
+            sys.exit(10)
         call_help()
         sys.exit(0)
-    elif len(sys.argv) > 1:
+    if args:
+        print("Invalid arguments", file=sys.stderr)
         sys.exit(10)
     main()
 
