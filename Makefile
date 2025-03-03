@@ -5,7 +5,7 @@ INPUT=test.sol
 OUTPUT=test.sol.out
 
 all: $(EXE)
-	$(VER) $(EXE) < $(INPUT) > $(OUTPUT)
+	$(VER) $(EXE) < $(INPUT)
 
 test:
 	pytest
