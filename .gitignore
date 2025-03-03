@@ -1,3 +1,5 @@
 env/
 .vscode/
 IPP-1-tests/
+test.sol.out
+test.sol
