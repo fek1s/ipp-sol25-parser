@@ -107,7 +107,7 @@ CID: /[A-Z][a-zA-Z0-9_]*/
 
 ID: /(?!class|nil|true|false|self|super)[a-z_][a-zA-Z0-9_]*/
 
-INT: /^[+\-]?\d+$/
+INT: /[+\-]?\d+/
 
 STRING: /'(\\[n'\\\\]|[^'\\])*'/
 
@@ -132,7 +132,7 @@ def call_help():
 
 def main():
     source_code = sys.stdin.read()
-    print(source_code)
+    #print(source_code)
 
     try:
         tree = sol25_parser.parse(source_code)
