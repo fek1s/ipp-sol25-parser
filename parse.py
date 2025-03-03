@@ -149,9 +149,11 @@ def main():
 
 
 if __name__ == "__main__":
-    if "--help" in sys.argv:
+    if "--help" in sys.argv or "-h" in sys.argv:
         call_help()
         sys.exit(0)
+    elif len(sys.argv) > 1:
+        sys.exit(10)
     main()
 
     #Konec souboru parse.py (EOF)
