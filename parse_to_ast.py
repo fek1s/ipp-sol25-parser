@@ -24,3 +24,11 @@ class Sol25Transformer(Transformer):
     def program(self, *class_defs):
         # program: class_def*
         return ProgramNode(list(class_defs))
+    
+    def class_def(self, cname, pname, *methods):
+        # class_def: "class" CID ":" CID "{" method* "}"
+        return ClassNode(str(cname), str(pname), list(methods))
+    
+    def method(self, selector, block):
+        # method: selector block
+        return MethodNode(selector, block)
