@@ -78,7 +78,7 @@ class Sol25Transformer(Transformer):
         # statement: var_assign
         return statement
     
-    def var_assign(self, var, expr):
+    def var_assign(self, var,_assign, expr):
         # var_assign: ID ASSIGN expr
         return AssignNode(str(var), expr)
     
