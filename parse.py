@@ -5,17 +5,9 @@
 '''
 
 import sys
-from lark import Lark, UnexpectedToken, UnexpectedCharacters, Transformer
-from ast_nodes import (
-    ProgramNode,
-    ClassNode,
-    MethodNode,
-    BlockNode,
-    AssignNode,
-    SendNode,
-    LiteralNode,
-    VarNode,
-)
+from lark import Lark, UnexpectedToken, UnexpectedCharacters
+from parse_to_ast import Sol25Transformer
+
 
 sol25_grammar = r"""
 // 0) Start pravidlo
@@ -136,6 +128,7 @@ def main():
     source_code = sys.stdin.read()
     #print(source_code)
 
+    # Lex + Syntax analysis
     try:
         tree = sol25_parser.parse(source_code)
         print(tree.pretty())
@@ -146,6 +139,12 @@ def main():
         print(f"Unexpected characters: {e}", file=sys.stderr)
         sys.exit(21)
     
+    # AST transformation
+    transformer = Sol25Transformer()
+    ast_root = transformer.transform(tree)
+
+    # Print AST
+    print(ast_root)
 
 
 
