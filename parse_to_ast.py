@@ -93,7 +93,7 @@ class Sol25Transformer(Transformer):
             current = SendNode(current, sel, args)
         return current
 
-    def msg_send(self, *child):
+    def msg_send(self, child):
         # msg_send: paramless_send | keyword_send
         return child
     
