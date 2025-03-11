@@ -1,5 +1,7 @@
 env/
 .vscode/
-test/
+tests/
 test.sol.out
 test.sol
+__pycache__/
+.pytest_cache/
