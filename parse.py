@@ -7,6 +7,7 @@
 import sys
 from lark import Lark, UnexpectedToken, UnexpectedCharacters
 from parse_to_ast import Sol25Transformer
+from debug_print import print_ast
 
 
 sol25_grammar = r"""
@@ -126,15 +127,14 @@ def call_help():
 
 def main():
     source_code = sys.stdin.read()
-    #print(source_code)
 
-    # Lex + Syntax analysis
     try:
         tree = sol25_parser.parse(source_code)
-        print(tree.pretty())
+    # Semanticka chyba
     except UnexpectedToken as e:
         print(f"Unexpected token: {e}", file=sys.stderr)
         sys.exit(22)
+    # Lexikalni chyba
     except UnexpectedCharacters as e:
         print(f"Unexpected characters: {e}", file=sys.stderr)
         sys.exit(21)
@@ -143,8 +143,8 @@ def main():
     transformer = Sol25Transformer()
     ast_root = transformer.transform(tree)
 
-    # Print AST
-    print(ast_root)
+    # Debug print
+    print_ast(ast_root)
 
 
 
