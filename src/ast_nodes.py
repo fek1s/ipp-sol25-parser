@@ -1,3 +1,9 @@
+"""
+    @file: ast_nodes.py
+    @brief: Soubor obsahující třídy pro AST strom
+    @author: Jakub Fukala (xfukal01) 
+"""
+
 class ProgramNode:
     def __init__(self, classes):
         self.classes = classes # list of ClassNode
@@ -37,3 +43,6 @@ class LiteralNode:
 class VarNode:
     def __init__(self, var):
         self.var = var # str
+
+
+# Konec souboru ast_nodes.py (EOF)

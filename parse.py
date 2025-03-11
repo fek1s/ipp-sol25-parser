@@ -1,7 +1,8 @@
 '''
- @file parse.py
- @brief This is the main file of the project
- @author Jakub Fukala (xfukal01)
+ @file: parse.py
+ @brief: Toto je hlavní soubor pro spuštění programu parse.py
+ @details: Tento soubor obsahuje hlavní funkci main, která zpracovává vstupní soubor a vytváří AST strom.
+ @author: Jakub Fukala (xfukal01)
 '''
 
 import sys
@@ -54,5 +55,6 @@ if __name__ == "__main__":
         sys.exit(10)
     main()
 
-    #Konec souboru parse.py (EOF)
+    
+#Konec souboru parse.py (EOF)
     

@@ -1,7 +1,7 @@
 """
-    grammar.py
-    Definice gramatiky pro jazyk Sol25 pomocí Lark
-    Jakub Fukala (xfukal01)
+    @file: grammar.py
+    @brief: Definice gramatiky pro jazyk Sol25 pomocí Lark
+    @author: Jakub Fukala (xfukal01)
 """
 
 from lark import Lark
@@ -112,3 +112,5 @@ BLOCK_PARAM_ID: /:[a-z_][a-zA-Z0-9_]*/
 
 def create_parser():
     return Lark(sol25_grammar, start='start', parser='lalr')
+
+# Konec souboru grammar.py (EOF)

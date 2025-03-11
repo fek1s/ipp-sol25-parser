@@ -1,3 +1,9 @@
+"""
+    @file: debug_print.py
+    @brief: Debugovací výpis AST stromu
+    @author: Jakub Fukala (xfukal01) 
+"""
+
 from src.ast_nodes import *
 
 def print_ast(node, indent=0):

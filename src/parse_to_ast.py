@@ -1,9 +1,9 @@
-#parse_to_ast.py
-# '''
-#  @file parse_to_ast.py
-#  @brief This file contains the transformer classes for the Lark parser
-#  @author Jakub Fukala (xfukal01)
-# '''
+"""
+    @file parse_to_ast.py
+    @brief Soubor pro transformaci AST stromu pomocí Lark
+    @details Třída Sol25Transformer je potomek třídy Transformer z Lark.
+    @author Jakub Fukala (xfukal01)
+"""
 
 from lark import Transformer, v_args
 from src.ast_nodes import (
@@ -19,7 +19,7 @@ from src.ast_nodes import (
 
 @v_args(inline=True)
 class Sol25Transformer(Transformer):
-    """Tranforme pro stavbu AST stromu"""
+    """Tranformer pro stavbu AST stromu"""
 
     def start(self, program_node):
         # start: program
@@ -161,3 +161,4 @@ class Sol25Transformer(Transformer):
     def BLOCK_PARAM_ID(self, token):
         return token.value[1:] # Zahodit dvojtečku
     
+# Konec souboru parse_to_ast.py (EOF)
