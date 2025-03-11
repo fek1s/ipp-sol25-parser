@@ -5,3 +5,4 @@ test.sol.out
 test.sol
 __pycache__/
 .pytest_cache/
+is_it_ok.*

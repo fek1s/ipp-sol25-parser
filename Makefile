@@ -12,6 +12,8 @@ test:
 
 clean:
 	rm -f $(OUTPUT)
+	rm -rf testdir
+	rm -f is_it_ok.log
 	
 
 
