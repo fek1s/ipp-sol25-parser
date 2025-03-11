@@ -42,11 +42,11 @@ method: selector block
 // - Jednoslovny selektor: "run"
 // - Viceslovny selektor: "compute:and:and:"
 
-SINGLE_SELECTOR: /[a-z_][a-zA-Z0-9_]*/
-KEYWORD_SELECTOR: /[a-z_][a-zA-Z0-9_]*:/
+single_selector: /[a-z_][a-zA-Z0-9_]*/
+keyword_selector: /[a-z_][a-zA-Z0-9_]*:/
 
-selector: SINGLE_SELECTOR | multi_selector
-multi_selector: KEYWORD_SELECTOR+
+selector: single_selector | multi_selector
+multi_selector: keyword_selector+
 
 // ---------------------
 // 5) Bloky podle 10-14
