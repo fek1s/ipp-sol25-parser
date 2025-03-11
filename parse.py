@@ -10,6 +10,7 @@ from lark import UnexpectedToken, UnexpectedCharacters
 from src.parse_to_ast import Sol25Transformer
 from src.debug_print import print_ast
 from src.grammar import create_parser
+from src.sem_checker import SemChecker
 
 
 def call_help():
@@ -37,7 +38,15 @@ def main():
     ast_root = transformer.transform(tree)
 
     # Debug print
-    print_ast(ast_root)
+    #print_ast(ast_root)
+
+    # Semanticka kontrola
+
+    try:
+        sem_checker = SemChecker(ast_root)
+        sem_checker.check()
+    except SystemExit as e:
+        sys.exit(e.code)
 
 
 
