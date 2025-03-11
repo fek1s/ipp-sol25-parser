@@ -1,5 +1,5 @@
 env/
 .vscode/
-IPP-1-tests/
+test/
 test.sol.out
 test.sol
