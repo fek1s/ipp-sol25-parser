@@ -6,7 +6,7 @@
 # '''
 
 from lark import Transformer, v_args
-from ast_nodes import (
+from src.ast_nodes import (
     ProgramNode,
     ClassNode,
     MethodNode,

@@ -1,4 +1,4 @@
-from ast_nodes import *
+from src.ast_nodes import *
 
 def print_ast(node, indent=0):
     prefix = "  " * indent

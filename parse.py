@@ -5,12 +5,10 @@
 '''
 
 import sys
-from lark import Lark, UnexpectedToken, UnexpectedCharacters
-from parse_to_ast import Sol25Transformer
-from debug_print import print_ast
+from lark import UnexpectedToken, UnexpectedCharacters
+from src.parse_to_ast import Sol25Transformer
+from src.debug_print import print_ast
 from src.grammar import create_parser
-
-
 
 
 def call_help():
