@@ -21,6 +21,10 @@ from ast_nodes import (
 class Sol25Transformer(Transformer):
     """Tranforme pro stavbu AST stromu"""
 
+    def start(self, program_node):
+        # start: program
+        return program_node
+
     def program(self, *class_defs):
         # program: class_def*5
         return ProgramNode(list(class_defs))
