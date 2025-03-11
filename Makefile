@@ -8,7 +8,7 @@ all: $(EXE)
 	$(VER) $(EXE) < $(INPUT)
 
 test:
-	pytest
+	pytest tests/ --tb=short
 
 clean:
 	rm -f $(OUTPUT)
