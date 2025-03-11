@@ -31,6 +31,11 @@ class Sol25Transformer(Transformer):
     
     def class_def(self, cname, pname, *methods):
         # class_def: "class" CID ":" CID "{" method* "}"
+        if isinstance(cname, LiteralNode) and cname.type == "class":
+            cname = cname.value
+        if isinstance(pname, LiteralNode) and pname.type == "class":
+            pname = pname.value
+            
         return ClassNode(str(cname), str(pname), list(methods))
     
     def method(self, selector, block):
@@ -156,7 +161,7 @@ class Sol25Transformer(Transformer):
     
     def CID(self, token):
         # třída
-        return str(token)
+        return LiteralNode("class", token.value)
     
     def BLOCK_PARAM_ID(self, token):
         return token.value[1:] # Zahodit dvojtečku
