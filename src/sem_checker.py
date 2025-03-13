@@ -110,11 +110,14 @@ class SemChecker:
                 print(f"Variable {expr.var} not defined", file=sys.stderr)
                 sys.exit(32)
         elif isinstance(expr, LiteralNode):
-            if expr.value not in (self.defined_classes | self.builtin_classes):
-                print(f"Class {expr.value} not defined", file=sys.stderr)
-                sys.exit(32)
-            else:
-                pass
+            if expr.type == "class" :
+                if expr.value not in (self.defined_classes | self.builtin_classes):
+                    print(f"Class {expr.value} not defined", file=sys.stderr)
+                    sys.exit(32)
+                else:
+                    # Je to "int", "string", "nil", "true", "false" => nic nedelame
+                    pass
+        
         elif isinstance(expr, SendNode):
             # rekurze => receiver, arguments
             self._check_expr(expr.receiver, local_vars)
