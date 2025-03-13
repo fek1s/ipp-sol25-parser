@@ -21,7 +21,16 @@ class SemChecker:
         self.ast_root = ast_root # Korenovy uzel AST stromu
         self.defined_classes = set()  # Taulka s definovanymi tridami (bez built-in trid)
         self.builtin_classes = {"Object", "String", "Integer", "Nil", "True", "False", "Block", "Nil"}
-        #TODO self.builtin_methods = {
+        self.builtin_class_methods = {
+            "Object": {"new", "from:"},
+            "Nil": {"new", "from:"},
+            "True": {"new", "from:"},
+            "False": {"new", "from:"},
+            "Integer": {"new", "from:"},  
+            "String": {"new", "from:", "read"},
+            "Block": {"new", "from:"}
+        }
+
 
     def check(self):
         '''Spusteni semantickych kontrol'''
@@ -117,6 +126,27 @@ class SemChecker:
                 else:
                     # Je to "int", "string", "nil", "true", "false" => nic nedelame
                     pass
+        
+        elif isinstance(expr, SendNode):
+            self._check_expr(expr.receiver, local_vars)
+            for arg in expr.arguments:
+                self._check_expr(arg, local_vars)
+
+            if isinstance(expr.receiver, LiteralNode) and expr.receiver.type == "class":
+                # Kontrola, zda trida ma metodu
+                class_name = expr.receiver.value    # Napr. "Integer"
+                sel = expr.selector                 # Napr. "new"        
+                if class_name in self.builtin_class_methods: 
+                    if sel not in self.builtin_class_methods[class_name]: 
+                        # Nedefinovana metoda tridy
+                        print(f"Class {class_name} has no method {sel}", file=sys.stderr)
+                        sys.exit(32)
+                else:
+                    # Trida neni built-in
+                    print(f"Class {class_name} has no methods", file=sys.stderr)
+                    sys.exit(32)
+            else:
+                pass
         
         elif isinstance(expr, SendNode):
             # rekurze => receiver, arguments
