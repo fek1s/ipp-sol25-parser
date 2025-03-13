@@ -63,9 +63,12 @@ class SemChecker:
     def _check_all_classes(self):
         '''Kontrola vsech trid'''
         for c in self.ast_root.classes:
-            # Pro kazdy MethodNode
+            # (32) Kontrola existence rodicovske tridy
+            if c.parent not in (self.defined_classes | self.builtin_classes):
+                print(f"Parent class {c.parent} not defined", file=sys.stderr)
+                sys.exit(32)
             for m in c.methods:
-                # (33) Porovnani 
+                # (33) Kontrola poctu parametru metody
                 expected_params =  m.selector.count(":")
                 block_params_count = len(m.block.params)
                 if expected_params != block_params_count:
