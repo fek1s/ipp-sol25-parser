@@ -95,6 +95,8 @@ class SemChecker:
                 if st.var in local_vars:
                     print(f"Variable {st.var} already defined", file=sys.stderr)
                     sys.exit(34)
+                # Pak kontrola vyrazu, zda neni pouzita nedefinovana promenna
+                self._check_expr(st.expr, local_vars)
 
                 # Pridani promenne do lokalnich promennych
                 local_vars.add(st.var)
