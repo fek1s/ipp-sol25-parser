@@ -157,7 +157,7 @@ class Sol25Transformer(Transformer):
     
     def ID(self, token):
         # proměnná
-        return str(token)
+        return VarNode(token.value)
     
     def CID(self, token):
         # třída
