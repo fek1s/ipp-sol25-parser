@@ -2,6 +2,12 @@
     @file: sem_checker.py
     @brief: Soubor pro semantickou kontrolu AST stromu
     @author: Jakub Fukala (xfukal01)
+    @details:
+      - 31: Chybí Main / run
+      - 32: Různé nedefinované (třída, proměnná, parent třídy, ...), nedef. třídní metoda
+      - 33: Arita
+      - 34: Kolize param vs lokální var, param je read-only
+      - 35: Duplicitní param vs param, redefinice třídy, cyklická dědičnost
 """
 
 import sys
@@ -31,18 +37,35 @@ class SemChecker:
             "Block": {"new", "from:"}
         }
 
+        self.class_parents = {} # Rodicovske tridy
+
 
     def check(self):
         '''Spusteni semantickych kontrol'''
-        self._collect_classes() # Naplni self.defined_classes
-        self._check_main_class() # (31) Kontrola existence Main tridy
-        self._check_all_classes() # (33) Kontrola vsech trid
+        # Sbírání definovaných tříd 
+        self._collect_classes() 
+        # Kontrola existence Main tridy a metody run => (31)
+        self._check_main_class() 
+        # Kontrola definic => rodičovská třída, počet parametrů => (32), (33)
+        self._check_all_classes()
+        # Kontrola cyklické dědičnosti => (35)
+        self.check_no_cycles()
+
+
 
     def _collect_classes(self):
         '''Naplneni seznamu definovanych trid'''
+        seen = set()
         for c in self.ast_root.classes:
-            # Registrace tridy do seznamu
+            # Redeinice tridy?
+            if c.name in seen:
+                print(f"Class {c.name} redefined", file=sys.stderr)
+                sys.exit(35)
+            seen.add(c.name)
+
             self.defined_classes.add(c.name)
+            self.class_parents[c.name] = c.parent # pro check_no_cycles
+
 
     def _check_main_class(self):
         '''Kontrola existence Main tridy a metody run'''
@@ -86,26 +109,29 @@ class SemChecker:
 
                 builtins_vars = {"self", "nil", "true", "false"}
 
-                initial_defined = set(m.block.params) | builtins_vars
-
+                # Kontrola duplicitnich parametru bloku
                 if len(m.block.params) != len(set(m.block.params)):
-                    sys.exit(34) # Duplicitni parametry
+                    print("Duplicate block params", file=sys.stderr)
+                    sys.exit(35) # Duplicitni parametry
 
-                self._check_block(m.block, initial_defined)
+                self._check_block(m.block, builtins_vars)
 
-    def _check_block(self, block, defined_vars):
-        # Kopie lokalnich promennych
-        local_vars = set(defined_vars)
+    def _check_block(self, block, parent_builtins):
+        
+        local_vars = set(parent_builtins) 
+        param_vars = set(block.params) # Parametry bloku
 
+        local_vars |= param_vars
+        
         for st in block.statements: # Pro kazdy statement
             if isinstance(st, AssignNode):
+                # Kontrola expr
                 self._check_expr(st.expr, local_vars)
                 # Kolize jmen promennych
-                if st.var in local_vars:
+                if st.var in param_vars:
                     print(f"Variable {st.var} already defined", file=sys.stderr)
                     sys.exit(34)
                 # Pak kontrola vyrazu, zda neni pouzita nedefinovana promenna
-                self._check_expr(st.expr, local_vars)
 
                 # Pridani promenne do lokalnich promennych
                 local_vars.add(st.var)
@@ -148,25 +174,45 @@ class SemChecker:
             else:
                 pass
         
-        elif isinstance(expr, SendNode):
-            # rekurze => receiver, arguments
-            self._check_expr(expr.receiver, local_vars)
-            for arg in expr.arguments:
-                self._check_expr(arg, local_vars)
-        
         elif isinstance(expr, BlockNode):
-            buildins = {"self", "nil", "true", "false"}
-            new_scope = set(expr.params) | buildins
-            # Kolize parametru => [ :x :x ] => error 34
+            #buildins = {"self", "nil", "true", "false"}
+            new_scope = set(expr.params) | local_vars
+            # Kontrola duplicitnich parametru bloku
             if len(expr.params) != len(set(expr.params)):
                 print("Duplicate block params", file=sys.stderr)
-                sys.exit(34)
+                sys.exit(35)
             self._check_block(expr, new_scope)
         else:
             pass
-            
+    
+    def check_no_cycles(self):
+        """Kontrola cyklické dědičnosti"""
+        print("Calling check_no_cycles")
+        visited = set()
+        stack = set()
 
-     
+        def dfs(cls_name):
+            if cls_name in stack:
+                print("Cycle in class hierarchy", file=sys.stderr)
+                sys.exit(35)
+            if cls_name in visited:
+                return
+            visited.add(cls_name)
+            stack.add(cls_name)
+
+            parent = self.class_parents.get(cls_name)
+            if parent in self.defined_classes:
+                dfs(parent)
+            
+            stack.remove(cls_name)
+
+        for c in self.defined_classes:
+            if c not in visited:
+                dfs(c)
+                
+                
+
+# Konec souboru sem_checker.py (EOF)   
                     
                     
 

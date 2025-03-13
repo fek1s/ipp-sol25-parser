@@ -24,6 +24,7 @@ def main():
     try:
         sol25_parser = create_parser()
         tree = sol25_parser.parse(source_code)
+        print(tree.pretty())
     # Semanticka chyba
     except UnexpectedToken as e:
         print(f"Unexpected token: {e}", file=sys.stderr)
@@ -38,7 +39,7 @@ def main():
     ast_root = transformer.transform(tree)
 
     # Debug print
-    #print_ast(ast_root)
+    print_ast(ast_root)
 
     # Semanticka kontrola
 
