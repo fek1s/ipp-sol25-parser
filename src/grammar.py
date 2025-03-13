@@ -103,7 +103,7 @@ INT: /[+\-]?\d+/
 
 STRING: /'(\\[n'\\\\]|[^'\\])*'/
 
-BLOCK_PARAM_ID: /:[a-z_][a-zA-Z0-9_]*/
+BLOCK_PARAM_ID: /:(?!self|super|true|false|nil|class)[a-z_][a-zA-Z0-9_]*/
 
 
 %ignore /"[^"]*"/
