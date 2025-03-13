@@ -45,7 +45,9 @@ block: "[" block_params? "|" block_stat? "]"
 
 block_params: (BLOCK_PARAM_ID)*
 
-block_stat: statement ( "." statement )* "."?
+//block_stat: statement ( "." statement )* "."?
+block_stat: (statement ".")+
+
 
 statement: var_assign
 
