@@ -31,7 +31,8 @@ method: selector block
 // - Jednoslovny selektor: "run"
 // - Viceslovny selektor: "compute:and:and:"
 
-single_selector: ID
+single_selector: /(?!class|nil|true|false|self|super)[a-z_][a-zA-Z0-9_]*:?/
+//single_selector: ID
 keyword_selector: /[a-z_][a-zA-Z0-9_]*:/
 
 selector: single_selector | multi_selector
