@@ -187,7 +187,6 @@ class SemChecker:
     
     def check_no_cycles(self):
         """Kontrola cyklické dědičnosti"""
-        print("Calling check_no_cycles")
         visited = set()
         stack = set()
 
