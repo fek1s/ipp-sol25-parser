@@ -189,7 +189,7 @@ class Sol25Transformer(Transformer):
         # Např. "'hello'"
         raw = token.value
         val = raw[1:-1] # Remove quotes
-        return LiteralNode("Sring", val)
+        return LiteralNode("String", val)
     
     def NIL(self, _):
         return LiteralNode("Nil", None)

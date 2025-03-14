@@ -82,9 +82,19 @@ def expr_to_xml(expr_node, parent_el):
     Podle druhu expr -> <literal>, <var>, <block> nebo <send>.
     """
     if isinstance(expr_node, LiteralNode):
+
+        value = str(expr_node.value)
+        if expr_node.type == "Nil":
+            value = "nil"
+        elif expr_node.type == "True":
+            value = "true"
+        elif expr_node.type == "False":
+            value = "false"
+        
+
         lit_el = ET.SubElement(parent_el, "literal", {
             "class": expr_node.type,  # e.g. "int","string","class","nil"...
-            "value": str(expr_node.value)
+            "value": value
         })
 
     elif isinstance(expr_node, VarNode):
@@ -104,7 +114,7 @@ def expr_to_xml(expr_node, parent_el):
         for i, arg_expr in enumerate(expr_node.arguments, start=1):
             arg_el = ET.SubElement(send_el, "arg", {"order": str(i)})
             arg_expr_el = ET.SubElement(arg_el, "expr")
-            expr_to_xml(arg_expr, arg_el)
+            expr_to_xml(arg_expr, arg_expr_el)
     else:
         # neznámý typ => do nothing or raise
         pass

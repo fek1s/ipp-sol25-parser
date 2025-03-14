@@ -74,6 +74,10 @@ class SemChecker:
         while class_name and class_name not in checked_classes:
             checked_classes.add(class_name)
 
+            # Pokud je to built-in třída, přidáme metody
+            if class_name in self.builtin_class_methods:
+                methods.update(self.builtin_class_methods[class_name])
+
             # Přidání metod aktuální třídy
             class_obj = next((c for c in self.ast_root.classes if c.name == class_name), None)
             if class_obj:
@@ -83,9 +87,6 @@ class SemChecker:
             # Posun na rodičovskou třídu
             class_name = self.class_parents.get(class_name)
 
-            # Pokud je to built-in třída, zkusíme její metody
-            if class_name in self.builtin_class_methods:
-                methods.update(self.builtin_class_methods[class_name])
 
         return methods
 
