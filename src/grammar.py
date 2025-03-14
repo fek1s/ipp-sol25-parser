@@ -28,8 +28,9 @@ method: selector block
 
 // ---------------------
 // 4) Selektory 
+BLOCK_PARAM_ID: /:(?!self|super|true|false|nil|class)[a-z_][a-zA-Z0-9_]*/
 
-RUN: "run"
+
 COLON: ":"
 
 selector: single_selector
@@ -82,7 +83,6 @@ keyword_send: (ID COLON expr)+
          | ID
          | CID
          | block
-         | RUN
          | "(" expr ")"
 
 // ---------------------
@@ -108,7 +108,6 @@ INT: /[+\-]?\d+/
 
 STRING: /'(\\[n'\\\\]|[^'\\])*'/
 
-BLOCK_PARAM_ID: /:(?!self|super|true|false|nil|class)[a-z_][a-zA-Z0-9_]*/
 
 
 %ignore /"[^"]*"/
