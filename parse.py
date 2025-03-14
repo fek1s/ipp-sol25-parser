@@ -11,6 +11,9 @@ from src.parse_to_ast import Sol25Transformer
 from src.debug_print import print_ast
 from src.grammar import create_parser
 from src.sem_checker import SemChecker
+from src.ast_to_xml import ast_to_xml
+import xml.etree.ElementTree as ET
+import re
 
 
 def call_help():
@@ -18,8 +21,24 @@ def call_help():
     print("Použití např.: python3.11 parse.py < [input_file] > [output_file]")
     print("  --help: Vypíše tuto nápovědu")
 
+def extract_comment(source_code):
+    '''Extrakce komentáře z kódu'''
+    match = re.search(r'"([^"]*)"', source_code, re.DOTALL)
+    if match:
+        return match.group(1)
+    return None
+
+def fix_coment_for_xml(comment):
+    '''Oprava komentáře pro XML'''
+    return comment.replace('\\n', '&#10;')
+
 def main():
     source_code = sys.stdin.read()
+    desc = extract_comment(source_code)
+    if desc:
+        desc = fix_coment_for_xml(desc)
+    else:
+        desc = None
 
     try:
         sol25_parser = create_parser()
@@ -48,6 +67,12 @@ def main():
         sem_checker.check()
     except SystemExit as e:
         sys.exit(e.code)
+
+    # Prevod AST do XML
+    root = ast_to_xml(ast_root, desc)
+    ET.indent(root, space="    ")
+    xml_str = '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding='unicode')
+    sys.stdout.write(xml_str)
 
 
 

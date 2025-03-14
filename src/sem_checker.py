@@ -66,6 +66,29 @@ class SemChecker:
             self.defined_classes.add(c.name)
             self.class_parents[c.name] = c.parent # pro check_no_cycles
 
+    def get_all_methods(self, class_name):
+        ''' Získání všech metod pro danou třídu včetně zděděných '''
+        methods = set()
+        checked_classes = set()
+
+        while class_name and class_name not in checked_classes:
+            checked_classes.add(class_name)
+
+            # Přidání metod aktuální třídy
+            class_obj = next((c for c in self.ast_root.classes if c.name == class_name), None)
+            if class_obj:
+                for method in class_obj.methods:
+                    methods.add(method.selector)
+
+            # Posun na rodičovskou třídu
+            class_name = self.class_parents.get(class_name)
+
+            # Pokud je to built-in třída, zkusíme její metody
+            if class_name in self.builtin_class_methods:
+                methods.update(self.builtin_class_methods[class_name])
+
+        return methods
+
 
     def _check_main_class(self):
         '''Kontrola existence Main tridy a metody run'''
@@ -162,17 +185,13 @@ class SemChecker:
                 # Kontrola, zda trida ma metodu
                 class_name = expr.receiver.value    # Napr. "Integer"
                 sel = expr.selector                 # Napr. "new"        
-                if class_name in self.builtin_class_methods: 
-                    if sel not in self.builtin_class_methods[class_name]: 
-                        # Nedefinovana metoda tridy
-                        print(f"Class {class_name} has no method {sel}", file=sys.stderr)
-                        sys.exit(32)
-                else:
-                    # Trida neni built-in
-                    print(f"Class {class_name} has no methods", file=sys.stderr)
+
+                # Zjisteni vsech metod
+                available_methods = self.get_all_methods(class_name)
+
+                if sel not in available_methods:
+                    print(f"Class {class_name} has no method {sel}", file=sys.stderr)
                     sys.exit(32)
-            else:
-                pass
         
         elif isinstance(expr, BlockNode):
             #buildins = {"self", "nil", "true", "false"}

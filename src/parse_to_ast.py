@@ -68,20 +68,41 @@ class Sol25Transformer(Transformer):
 
 
     def block(self, *children):
-        # block: "[" (block_params ("|" block_stat)? | block_stat)? "]"
-        params = []
-        statements = []
-        if len(children) == 1:
-            # maybe block_stat
-            c = children[0]
-            if isinstance(c, list):
-                # block_stat
-                statements = c
+        """
+        children může být:
+        - ()  -> prázdný blok [|]
+        - ( [AssignNode(...)...] ) -> jen statementy, [| a := 1.]
+        - ( [param1,...], ) -> jen parametry, [ :x :y |]
+        - ( [param1,...], [AssignNode(...), ...] ) -> param+statements
+        """
+        if len(children) == 0:
+            # prázdný block => [|]
+            return BlockNode(params=[], statements=[])
+
+        elif len(children) == 1:
+            # buď jen parametry NEBO jen statementy
+            single = children[0]
+            if not single:
+                # je to prázdný list => [|]
+                return BlockNode([], [])
+            # Rozlišíme, zda v single jsou parametry nebo statementy
+            # Např. pokud 'single' je list param. (podle Vašeho Transformeru: single může být ["x","y","z"]
+            # NEBO list AssignNode
+            if single and isinstance(single[0], str):
+                # => parametry
+                return BlockNode(params=single, statements=[])
+            else:
+                # => statementy
+                return BlockNode(params=[], statements=single)
+
         elif len(children) == 2:
-            # block_params ("|" block_stat)?
-            params = children[0]
-            statements = children[1]
-        return BlockNode(params, statements)
+            # (param-list, statement-list)
+            params_list, stat_list = children
+            return BlockNode(params=params_list, statements=stat_list)
+
+        else:
+            # nečekaný případ
+            return BlockNode([], [])
     
     def block_params(self, *params):
     # e.g. params = [VarNode("x"), VarNode("y"), VarNode("z")]
@@ -90,7 +111,8 @@ class Sol25Transformer(Transformer):
             if isinstance(p, VarNode):
                 out.append(p.var)
             else:
-                out.append(str(p))
+                out.append(str(p)[:1]) # zahodit dvojtečku
+        #print("block_params", out)
         return out
     
     def block_stat(self, *statements):
@@ -126,9 +148,11 @@ class Sol25Transformer(Transformer):
         return child
     
     def paramless_send(self, selector):
-        # paramless_send: "print"
-        return (str(selector), [])
-    
+        if isinstance(selector, VarNode):
+              return (selector.var, [])
+        else:
+            return (str(selector), [])
+
     def keyword_send(self, *tokens):
         # tokens = [ ID, COLON, expr, ID, COLON, expr, ... ]
         sel_parts = []
@@ -159,22 +183,22 @@ class Sol25Transformer(Transformer):
     
     def INT(self, token):
         # Např. "42"
-        return LiteralNode("int", token.value)
+        return LiteralNode("Integer", token.value)
     
     def STRING(self, token):
         # Např. "'hello'"
         raw = token.value
         val = raw[1:-1] # Remove quotes
-        return LiteralNode("string", val)
+        return LiteralNode("Sring", val)
     
     def NIL(self, _):
-        return LiteralNode("nil", None)
+        return LiteralNode("Nil", None)
     
     def TRUE(self, _):
-        return LiteralNode("true", True)
+        return LiteralNode("True", True)
     
     def FALSE(self, _):
-        return LiteralNode("false", False)
+        return LiteralNode("False", False)
     
     def SELF(self, _):
         return VarNode("self")
