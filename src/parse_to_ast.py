@@ -42,21 +42,26 @@ class Sol25Transformer(Transformer):
         # method: selector block
         return MethodNode(selector, block)
 
-    def selector(self, child):
-        # selector: SINGLE_SELECTOR | multi_selector
-        return child
-    
-    def single_selector(self, token):
-        # single_selector: "run:"
-        return str(token)
-    
-    def keyword_selector(self, token):
-        # keyword_selector: "compute:and:and:"
-        return str(token)
-    
-    def multi_selector(self, *selectors):
-        # multi_selector: keyword_selector+
-        return "".join(selectors) # Concatenate all selectors
+    def selector(self, *parts):
+        """
+        parts může být ("run",) anebo (VarNode("p4"), ":", VarNode("aa4a"), ":")
+        """
+        if len(parts) == 1 and parts[0] == "run":
+            return "run"
+        # multi selektor
+        # => (p4, ":", aa4a, ":") => => "p4:aa4a:"
+        sel = ""
+        i = 0
+        while i < len(parts):
+            # parts[i] bude VarNode("p4")
+            if isinstance(parts[i], VarNode):
+                sel += parts[i].var + ":"
+            else:
+                # fallback
+                sel += str(parts[i]) + ":"
+            i += 2  # posun o 2 => ID, ":"
+        return sel
+
 
     def block(self, *children):
         # block: "[" (block_params ("|" block_stat)? | block_stat)? "]"
@@ -75,9 +80,14 @@ class Sol25Transformer(Transformer):
         return BlockNode(params, statements)
     
     def block_params(self, *params):
-        # block_params: (BLOCK_PARAM_ID)*
-        # Každý param se vrací jako string "param" bez dvojtečky
-        return list(params)
+    # e.g. params = [VarNode("x"), VarNode("y"), VarNode("z")]
+        out = []
+        for p in params:
+            if isinstance(p, VarNode):
+                out.append(p.var)
+            else:
+                out.append(str(p))
+        return out
     
     def block_stat(self, *statements):
         # block_stat: statement ( "." statement )* "."?
@@ -126,7 +136,11 @@ class Sol25Transformer(Transformer):
             i += 1
             e = tokens[i] # expr
             i += 1
-            sel_parts.append(str(s) + ":")
+            #sel_parts.append(str(s) + ":")
+            if isinstance(s, VarNode):
+                sel_parts.append(s.var + ":")
+            else:
+                sel_parts.append(str(s) + ":")
             args.append(e)
         # Concatenate all selectors
         selector = "".join(sel_parts)

@@ -28,16 +28,12 @@ method: selector block
 
 // ---------------------
 // 4) Selektory 
-// - Jednoslovny selektor: "run"
-// - Viceslovny selektor: "compute:and:and:"
 
-single_selector: /(?!class|nil|true|false|self|super)[a-z_][a-zA-Z0-9_]*:?/
-//single_selector: ID
+RUN: "run"
+COLON: ":"
 
-keyword_selector: /[a-z_][a-zA-Z0-9_]*:/
+selector: RUN | (ID COLON)+
 
-selector: single_selector | multi_selector
-multi_selector: keyword_selector+
 
 // ---------------------
 // 5) Bloky podle 10-14
@@ -66,7 +62,7 @@ msg_send: paramless_send | keyword_send
 
 paramless_send: ID
 
-keyword_send: (ID ":" expr)+
+keyword_send: (ID COLON expr)+
 
 
 ?primary: INT
@@ -79,6 +75,7 @@ keyword_send: (ID ":" expr)+
          | ID
          | CID
          | block
+         | RUN
          | "(" expr ")"
 
 // ---------------------
