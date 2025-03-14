@@ -32,7 +32,14 @@ method: selector block
 RUN: "run"
 COLON: ":"
 
-selector: RUN | (ID COLON)+
+selector: single_selector
+        | multi_selector
+
+// (3) single_selector = jednoslovný ID (bez dvojtečky)
+single_selector: ID
+
+// (4) multi_selector = jeden či více "ID :"
+multi_selector: (ID COLON)+
 
 
 // ---------------------

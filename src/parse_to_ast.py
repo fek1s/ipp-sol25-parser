@@ -41,26 +41,30 @@ class Sol25Transformer(Transformer):
     def method(self, selector, block):
         # method: selector block
         return MethodNode(selector, block)
-
-    def selector(self, *parts):
-        """
-        parts může být ("run",) anebo (VarNode("p4"), ":", VarNode("aa4a"), ":")
-        """
-        if len(parts) == 1 and parts[0] == "run":
-            return "run"
-        # multi selektor
-        # => (p4, ":", aa4a, ":") => => "p4:aa4a:"
+    
+    def single_selector(self, token):
+        # jednoslovný selekto   r
+        # token je VarNode("run") nebo VarNode("asString") atd.
+        if isinstance(token, VarNode):
+            return token.var
+        else:
+            return str(token)
+        
+    def multi_selector(self, *parts):
+    # parts např. (VarNode("compute"), ":", VarNode("and"), ":", VarNode("and"), ":")
         sel = ""
         i = 0
         while i < len(parts):
-            # parts[i] bude VarNode("p4")
-            if isinstance(parts[i], VarNode):
-                sel += parts[i].var + ":"
+            node = parts[i]
+            if isinstance(node, VarNode):
+                sel += node.var + ":"
             else:
-                # fallback
-                sel += str(parts[i]) + ":"
-            i += 2  # posun o 2 => ID, ":"
+                sel += str(node) + ":"
+            i += 2  # posun o 2 => ID, COLON
         return sel
+
+    def selector(self, child):
+       return child
 
 
     def block(self, *children):
@@ -126,23 +130,27 @@ class Sol25Transformer(Transformer):
         return (str(selector), [])
     
     def keyword_send(self, *tokens):
-        # gramatika: (ID ":" expr)+ 
-        # Vrací tuple (selector, [args])
+        # tokens = [ ID, COLON, expr, ID, COLON, expr, ... ]
         sel_parts = []
         args = []
         i = 0
         while i < len(tokens):
-            s = tokens[i] # ID
+            s = tokens[i]       # ID
             i += 1
-            e = tokens[i] # expr
+            colon = tokens[i]   # COLON
             i += 1
-            #sel_parts.append(str(s) + ":")
+            e = tokens[i]       # expr
+            i += 1  
+
+            # s je typicky VarNode("from") nebo "from"
+            # e je výraz
             if isinstance(s, VarNode):
                 sel_parts.append(s.var + ":")
             else:
                 sel_parts.append(str(s) + ":")
+
             args.append(e)
-        # Concatenate all selectors
+
         selector = "".join(sel_parts)
         return (selector, args)
 
