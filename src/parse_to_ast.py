@@ -135,13 +135,30 @@ class Sol25Transformer(Transformer):
     def expr(self, expr):
         # expr: send_expr
         return expr
+
+    def arg_expr(self, child):
+        return child
+    
+    def arg_primary(self, child):
+        return child
     
     def send_expr(self, primary, *messages):
-        # send_expr: primary (msg_send)*
-        current = primary
-        for (sel, args) in messages:
-            current = SendNode(current, sel, args)
-        return current
+        if not messages:
+            return primary
+        
+        if len(messages) == 1:
+            sel, args = messages[0]
+            return SendNode(primary, sel, args)
+
+        selector_parts = []
+        full_args = []
+
+        for sel, args in messages:
+            selector_parts.append(sel)
+            full_args.extend(args)
+        
+        full_selector = "".join(selector_parts)
+        return SendNode(primary, full_selector, full_args)
 
     def msg_send(self, child):
         # msg_send: paramless_send | keyword_send

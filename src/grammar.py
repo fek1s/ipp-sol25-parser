@@ -40,6 +40,7 @@ selector: single_selector
 single_selector: ID
 
 // (4) multi_selector = jeden či více "ID :"
+
 multi_selector: (ID COLON)+
 
 
@@ -50,9 +51,7 @@ block: "[" block_params? "|" block_stat? "]"
 
 block_params: (BLOCK_PARAM_ID)*
 
-//block_stat: statement ( "." statement )* "."?
 block_stat: (statement ".")+
-
 
 statement: var_assign
 
@@ -70,8 +69,22 @@ msg_send: paramless_send | keyword_send
 
 paramless_send: ID
 
-keyword_send: (ID COLON expr)+
+keyword_send: (ID COLON arg_expr)+
 
+?arg_expr: arg_primary
+         | "(" expr ")"
+
+         
+?arg_primary: INT
+            | STRING
+            | NIL
+            | TRUE
+            | FALSE
+            | SELF
+            | SUPER
+            | ID
+            | CID
+            | block
 
 ?primary: INT
          | STRING
