@@ -126,7 +126,16 @@ class SemChecker:
             if c.parent not in (self.defined_classes | self.builtin_classes):
                 print(f"Parent class {c.parent} not defined", file=sys.stderr)
                 sys.exit(32)
+
+            defined_methods = set()
+            
             for m in c.methods:
+                # (35) Kontrola duplicitnich metod
+                if m.selector in defined_methods:
+                    print(f"Method {m.selector} already defined", file=sys.stderr)
+                    sys.exit(35)
+                defined_methods.add(m.selector)
+
                 # (33) Kontrola poctu parametru metody
                 expected_params =  m.selector.count(":")
                 block_params_count = len(m.block.params)
@@ -234,7 +243,7 @@ class SemChecker:
                 dfs(parent)
             
             stack.remove(cls_name)
-        
+
         for c in self.defined_classes:
             if c not in visited:
                 dfs(c)
