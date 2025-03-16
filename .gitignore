@@ -7,3 +7,4 @@ __pycache__/
 .pytest_cache/
 is_it_ok.*
 *.zip
+testdir/
