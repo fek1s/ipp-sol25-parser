@@ -29,7 +29,7 @@ def extract_comment(source_code):
     return None
 
 def fix_coment_for_xml(comment):
-    '''Oprava komentáře pro XML'''
+    '''Nahradi \n'''
     return comment.replace('\\n', '&#10;')
 
 def main():
@@ -53,15 +53,14 @@ def main():
         print(f"Unexpected characters: {e}", file=sys.stderr)
         sys.exit(21)
     
-    # AST transformation
+    # Převod na AST
     transformer = Sol25Transformer()
     ast_root = transformer.transform(tree)
 
-    # Debug print
+    # Debugovací výpis AST stromu
     print_ast(ast_root)
 
     # Semanticka kontrola
-
     try:
         sem_checker = SemChecker(ast_root)
         sem_checker.check()
@@ -74,11 +73,15 @@ def main():
     xml_str = '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding='unicode')
     sys.stdout.write(xml_str)
 
+    #Konec funkce main
+
 
 
 
 if __name__ == "__main__":
-    args = sys.argv[1:] # Skip the first argument (name of the script)
+    """Vstupní bod programu"""
+
+    args = sys.argv[1:] # Ignoruj první argument (název skriptu)
     if "--help" in args or "-h" in args:
         if len(args) > 1:
             print("Invalid arguments", file=sys.stderr)

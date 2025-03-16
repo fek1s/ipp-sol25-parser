@@ -43,15 +43,16 @@ class Sol25Transformer(Transformer):
         return MethodNode(selector, block)
     
     def single_selector(self, token):
-        # jednoslovný selekto   r
-        # token je VarNode("run") nebo VarNode("asString") atd.
+        # single_selector: ID
+        # token je typicky VarNode("compute") nebo "compute"
         if isinstance(token, VarNode):
             return token.var
         else:
             return str(token)
         
     def multi_selector(self, *parts):
-    # parts např. (VarNode("compute"), ":", VarNode("and"), ":", VarNode("and"), ":")
+        # multi_selector: (ID COLON)+
+        # parts = [ID, COLON, ID, COLON, ...]
         sel = ""
         i = 0
         while i < len(parts):
@@ -64,6 +65,7 @@ class Sol25Transformer(Transformer):
         return sel
 
     def selector(self, child):
+       # selector: single_selector | multi_selector
        return child
 
 
@@ -86,8 +88,6 @@ class Sol25Transformer(Transformer):
                 # je to prázdný list => [|]
                 return BlockNode([], [])
             # Rozlišíme, zda v single jsou parametry nebo statementy
-            # Např. pokud 'single' je list param. (podle Vašeho Transformeru: single může být ["x","y","z"]
-            # NEBO list AssignNode
             if single and isinstance(single[0], str):
                 # => parametry
                 return BlockNode(params=single, statements=[])
@@ -101,22 +101,22 @@ class Sol25Transformer(Transformer):
             return BlockNode(params=params_list, statements=stat_list)
 
         else:
-            # nečekaný případ
             return BlockNode([], [])
     
     def block_params(self, *params):
-    # e.g. params = [VarNode("x"), VarNode("y"), VarNode("z")]
+        # block_params: (BLOCK_PARAM_ID)*
+        # params = [VarNode("x"), VarNode("y"), VarNode("z")]
         out = []
         for p in params:
             if isinstance(p, VarNode):
                 out.append(p.var)
             else:
                 out.append(str(p)[:1]) # zahodit dvojtečku
-        #print("block_params", out)
         return out
     
     def block_stat(self, *statements):
-        # block_stat: statement ( "." statement )* "."?
+        # block_stat: (statement ".")+
+        # statements = [AssignNode(...), AssignNode(...), ...
         return list(statements)
 
     def statement(self, statement):
@@ -125,7 +125,6 @@ class Sol25Transformer(Transformer):
     
     def var_assign(self, var,_assign, expr):
         # var_assign: ID ASSIGN expr
-        #return AssignNode(str(var), expr)
         if isinstance(var, VarNode):
             var = var.var
         else:
@@ -143,13 +142,18 @@ class Sol25Transformer(Transformer):
         return child
     
     def send_expr(self, primary, *messages):
+        # send_expr: primary (msg_send)*
+
+        # Pokud není žádná zpráva, vrátíme jen primary
         if not messages:
             return primary
         
+        # Pokud je jen jedna zpráva, vrátíme SendNode
         if len(messages) == 1:
             sel, args = messages[0]
             return SendNode(primary, sel, args)
 
+        # Pokud je více zpráv, spojíme je do jedné
         selector_parts = []
         full_args = []
 
@@ -165,13 +169,15 @@ class Sol25Transformer(Transformer):
         return child
     
     def paramless_send(self, selector):
+        # paramless_send: ID
+        # selector je typicky VarNode("from") nebo "from"
         if isinstance(selector, VarNode):
               return (selector.var, [])
         else:
             return (str(selector), [])
 
     def keyword_send(self, *tokens):
-        # tokens = [ ID, COLON, expr, ID, COLON, expr, ... ]
+        # keyword_send: (ID COLON arg_expr)+
         sel_parts = []
         args = []
         i = 0
