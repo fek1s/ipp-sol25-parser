@@ -10,6 +10,11 @@ all: $(EXE)
 test:
 	pytest tests/ --tb=short
 
+pack:
+	rm -rf testdir
+	./pack.sh 
+	./is_it_ok.sh xfukal01.zip testdir
+
 clean:
 	rm -f $(OUTPUT)
 	rm -rf testdir
