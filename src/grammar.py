@@ -117,7 +117,8 @@ ID: /(?!class|nil|true|false|self|super)[a-z_][a-zA-Z0-9_]*/
 
 INT: /[+\-]?\d+/
 
-STRING: /'(\\[n'\\\\]|[^'\\])*'/
+STRING: /'(\\[ntr'\\]|[^'\\\n])*'/
+
 
 // Comments
 %ignore /"[^"]*"/
