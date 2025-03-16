@@ -17,6 +17,8 @@ from src.ast_nodes import (
     VarNode,
 )
 
+import sys
+
 @v_args(inline=True)
 class Sol25Transformer(Transformer):
     """Tranformer pro stavbu AST stromu"""
@@ -212,6 +214,9 @@ class Sol25Transformer(Transformer):
         # Např. "'hello'"
         raw = token.value
         val = raw[1:-1] # Remove quotes
+        if val == "\\n":  # Pokud je to pouze \n, je to neplatné
+            print("Invalid string: '\\n'", file=sys.stderr)
+            sys.exit(21)
         return LiteralNode("String", val)
     
     def NIL(self, _):
