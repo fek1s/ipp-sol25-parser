@@ -21,8 +21,12 @@ rsync -av --exclude="__pycache__" src/ "$TMP_DIR/src"
 
 # Přidat soubory z kořenového adresáře
 cp parse.py "$TMP_DIR"
-if [[ -f "readme1.md" ]]; then
-    cp "readme1.md" "$TMP_DIR"
+if [[ -f "readme1.pdf" ]]; then
+    cp "readme1.pdf" "$TMP_DIR"
+fi
+
+if [[ -f "rozsireni" ]]; then
+    cp "rozsireni" "$TMP_DIR"
 fi
 
 # Přesun do dočasného adresáře a vytvoření ZIP
