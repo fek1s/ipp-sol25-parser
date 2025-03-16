@@ -17,7 +17,7 @@ from src.ast_nodes import (
 )
 
 def ast_to_xml(program_node, first_coment=None):
-    '''Prevod AST do XML'''
+    '''Hlaní metoda pro prevod AST do XML'''
     root = ET.Element("program", {"language": "SOL25"})    
     if first_coment:
         desc = first_coment.replace("\n", "&nbsp;")
@@ -34,6 +34,7 @@ def class_to_xml(class_node):
         "parent": class_node.parent
     })
 
+    # Metody tridy
     for method in class_node.methods:
         method_elem = ET.SubElement(class_elem, "method", {
             "selector": method.selector
@@ -116,5 +117,5 @@ def expr_to_xml(expr_node, parent_el):
             arg_expr_el = ET.SubElement(arg_el, "expr")
             expr_to_xml(arg_expr, arg_expr_el)
     else:
-        # neznámý typ => do nothing or raise
+        # neznámý typ 
         pass

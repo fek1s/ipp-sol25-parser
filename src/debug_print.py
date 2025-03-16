@@ -7,8 +7,9 @@
 from src.ast_nodes import *
 
 def print_ast(node, indent=0):
+    """Rekurzivní výpis AST stromu"""
+
     prefix = "  " * indent
-    # Rozlišíte typ uzlu
     if isinstance(node, ProgramNode):
         print(f"{prefix}ProgramNode:")
         for cls in node.classes:

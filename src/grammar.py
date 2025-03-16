@@ -28,8 +28,6 @@ method: selector block
 
 // ---------------------
 // 4) Selektory 
-BLOCK_PARAM_ID: /:(?!self|super|true|false|nil|class)[a-z_][a-zA-Z0-9_]*/
-
 
 COLON: ":"
 
@@ -46,6 +44,8 @@ multi_selector: (ID COLON)+
 
 // ---------------------
 // 5) Bloky podle 10-14
+
+BLOCK_PARAM_ID: /:(?!self|super|true|false|nil|class)[a-z_][a-zA-Z0-9_]*/
 
 block: "[" block_params? "|" block_stat? "]"
 
@@ -111,8 +111,6 @@ SUPER: "super"
 // Operators
 ASSIGN: ":="
 
-
-
 CID: /[A-Z][a-zA-Z0-9_]*/
 
 ID: /(?!class|nil|true|false|self|super)[a-z_][a-zA-Z0-9_]*/
@@ -121,8 +119,7 @@ INT: /[+\-]?\d+/
 
 STRING: /'(\\[n'\\\\]|[^'\\])*'/
 
-
-
+// Comments
 %ignore /"[^"]*"/
 
 // Whitespace
